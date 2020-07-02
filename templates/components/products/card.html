@@ -1,3 +1,5 @@
+{{inject 'token' settings.storefront_api.token}}
+
 <article class="card {{#if alternate}}card--alternate{{/if}}" {{#if settings.data_tag_enabled}} data-event-type="{{event}}" data-entity-id="{{id}}" data-position="{{position}}" data-name="{{name}}" data-product-category="{{#each category}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}" data-product-brand="{{brand.name}}" data-product-price="{{#if price.with_tax}}{{price.with_tax.value}}{{else}}{{price.without_tax.value}}{{/if}}"  {{/if}}>
     <figure class="card-figure">
         {{#or price.non_sale_price_with_tax price.non_sale_price_without_tax}}
@@ -29,6 +31,7 @@
         </a>
 
         <figcaption class="card-figcaption">
+            <input type="hidden" class="card-id" name="product_id" value="{{id}}"/>
             <div class="card-figcaption-body">
                 {{#unless hide_product_quick_view}}
                     {{#if theme_settings.show_product_quick_view}}

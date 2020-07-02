@@ -255,10 +255,23 @@ export function alertModal() {
 }
 
 /*
- * Display the given message in the default alert modal
- */
+* Display the given message in the default alert modal
+*/
 export function showAlertModal(message) {
     const modal = alertModal();
     modal.open();
     modal.updateContent(`<span>${message}</span>`);
+}
+
+/*
+ * A success modal
+ */
+export function successModal() {
+    return modalFactory('#success-modal')[0];
+}
+
+export function showSuccessModal(message) {
+    const modal = successModal();
+    modal.open();
+    modal.updateContent(`<span>${message}</span>`)
 }

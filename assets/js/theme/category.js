@@ -13,6 +13,72 @@ export default class Category extends CatalogPage {
             this.onSortBySubmit = this.onSortBySubmit.bind(this);
             hooks.on('sortBy-submitted', this.onSortBySubmit);
         }
+
+        const token = this.context.token;
+        const imagesArr = [];
+        let imgSize;
+
+        if (this.context.themeSettings.zoom_size.indexOf('1280') !== -1) {
+            imgSize = this.context.themeSettings.zoom_size.slice(0, 4);
+        } else {
+            imgSize = this.context.themeSettings.zoom_size.slice(0, 3);
+        }
+
+        function getImages() {
+            fetch(
+                '/graphql',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            query SrcsetImages {
+                                site {
+                                    product(entityId: 112) {
+                                        images {
+                                            edges {
+                                                node {
+                                                    url${imgSize}wide: url(width: ${imgSize})
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        `,
+                    }),
+                },
+            )
+                .then(response => response.json())
+                .then(response => {
+                    response.data.site.product.images.edges.forEach(imgPush => {
+                        imagesArr.push(imgPush);
+                    });
+                });
+        }
+        if (this.context.categoryId === 24) {
+            getImages();
+
+            const cardContainer = document.querySelectorAll('.card-img-container > img');
+
+            cardContainer.forEach(cardImg => {
+                $('.card-img-container').mouseover(() => {
+                    Object.assign(cardImg, {
+                        src: Object.values(Object.values(imagesArr[1])[0]),
+                        srcset: Object.values(Object.values(imagesArr[1])[0]),
+                    });
+                });
+                $('.card-img-container').mouseout(() => {
+                    Object.assign(cardImg, {
+                        src: Object.values(Object.values(imagesArr[0])[0]),
+                        srcset: Object.values(Object.values(imagesArr[0])[0]),
+                    });
+                });
+            });
+        }
     }
 
     initFacetedSearch() {
